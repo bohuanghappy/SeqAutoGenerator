@@ -1,8 +1,8 @@
-package service;
+package com.dang.seq.service;
 
 import com.dang.seq.client.ZkClient;
-import com.dang.seq.dao.ApiAuthorizeMapDao;
-import com.dang.seq.dto.ApiAuthorizeMapDto;
+import com.dang.seq.dao.OrderIdDao;
+import com.dang.seq.dto.OrderIdDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -19,12 +19,12 @@ public class SeqService {
     @Resource
     private ZkClient zkClient;
     @Resource
-    private ApiAuthorizeMapDao apiAuthorizeMapDao;
+    private OrderIdDao orderIdDao;
     
-    private static Integer retryTime = 3;
     
     public Long generator(String token) {
     
+        Integer retryTime = 3;
     
         String tableName = null;
         while (retryTime-- > 0) {
@@ -32,17 +32,17 @@ public class SeqService {
                 tableName = zkClient.getData("/" + token);
                 break;
             } catch (Exception e) {
-                log.error("从zk上获取[{}]节点值异常", token);
+                e.printStackTrace();
             }
         }
         if (StringUtils.isEmpty(tableName)) {
             throw new RuntimeException("从zk上获取值异常");
         }
+    
+        System.out.println("table name: " + tableName);
         
-        
-        ApiAuthorizeMapDto apiAuthorizeMapDto = apiAuthorizeMapDao.selectById(10008001L);
-        
-        return String.valueOf(apiAuthorizeMapDto.getApi_id());
+        return orderIdDao.selectById(tableName);
+    
     }
     
     

@@ -4,8 +4,10 @@ import lombok.Getter;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @Author huangbojs
@@ -16,21 +18,20 @@ public class ZkClient {
     
     private CuratorFramework client;
     
-    @Value("${zk.connectStr}")
-    private String connectStr;
-    @Value("${zk.namespace}")
-    private String zkNamespace;
-    @Value("${zk.connection.timeout}")
-    private Integer timeout;
-    @Value("${zk.charset:utf-8} ")
-    private String charset;
+    @Autowired
+    private ZkProperties zkProperties;
     
     public ZkClient() {
+        
+    }
+    
+    @PostConstruct
+    public void ZkClientBuild() {
         client = CuratorFrameworkFactory.builder()
-                .namespace("zookeeper")
-                .connectString(connectStr)
-                .connectionTimeoutMs(timeout)
-                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                .namespace(zkProperties.getNamespace())
+                .connectString(zkProperties.getConnectStr())
+                .connectionTimeoutMs(zkProperties.getTimeout())
+                .retryPolicy(new ExponentialBackoffRetry(1000, 10))
                 .build();
         client.start();
     }
@@ -42,6 +43,6 @@ public class ZkClient {
     
 
     public String getData(String path) throws Exception {
-        return new String(client.getData().forPath(path), charset);
+        return new String(client.getData().forPath(path), zkProperties.getCharset());
     }
 }

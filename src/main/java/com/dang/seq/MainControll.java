@@ -1,32 +1,36 @@
 package com.dang.seq;
 
-import com.dang.seq.dao.ApiAuthorizeMapDao;
-import com.dang.seq.dto.ApiAuthorizeMapDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import com.dang.seq.service.SeqService;
 
 /**
  * @Author huangbojs
  */
 @Controller
+@Configuration
 @EnableAutoConfiguration
+@EnableConfigurationProperties
 @ComponentScan
+//@SpringBootConfiguration
 @RequestMapping("/service")
 public class MainControll {
     
     @Autowired
-    private ApiAuthorizeMapDao apiAuthorizeMapDao;
+    private SeqService seqService;
     
     @RequestMapping("/seq")
     @ResponseBody
-    public String seq() {
-        ApiAuthorizeMapDto apiAuthorizeMapDto = apiAuthorizeMapDao.selectById(10008001L);
-        return String.valueOf(apiAuthorizeMapDto.getApi_id());
+    public String seq() throws Exception {
+        String token = "id";
+        return seqService.generator(token).toString();
     }
     
     public static void main(String[] args) {

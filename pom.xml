@@ -8,14 +8,24 @@
   <name>auto-generator Maven Webapp</name>
   <url>http://maven.apache.org</url>
 
+<!--   inherit defaults from Spring boot-->
   <parent>
-    <!-- Your own application should inherit from spring-boot-starter-parent -->
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>1.5.2.RELEASE</version>
   </parent>
 
+  <properties>
+      <resouce.delimiter></resouce.delimiter>
+  </properties>
+
+
   <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <optional>true</optional>
+    </dependency>
     <!-- Compile -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -70,6 +80,7 @@
     </dependency>
   </dependencies>
 
+<!--  package as an executable jar-->
   <build>
     <finalName>auto-generator</finalName>
     <plugins>
